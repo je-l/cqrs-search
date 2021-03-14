@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searchengineimport
+  labels:
+    app: searchengineimport
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: searchengineimport
+  template:
+    metadata:
+      labels:
+        app: searchengineimport
+    spec:
+      containers:
+      - name: searchengineimport
+        image: searchengineimport

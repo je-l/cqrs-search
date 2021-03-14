@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: searchengine
+  labels:
+    app: searchengine
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+  clusterIP: None
+  selector:
+    app: searchengine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searchengine
+  labels:
+    app: searchengine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: searchengine
+  template:
+    metadata:
+      labels:
+        app: searchengine
+    spec:
+      containers:
+      - name: searchengine
+        image: searchengine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searchengine-elasticsearch-service
+  labels:
+    app: searchengine-elasticsearch-service
+spec:
+  ports:
+  - port: 9200
+    name: request-port
+    protocol: TCP
+  - port: 9300
+    name: communication-port
+    protocol: TCP
+  clusterIP: None
+  selector:
+    app: searchengine-elasticsearch
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searchengine-elasticsearch
+  labels:
+    app: searchengine-elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: searchengine-elasticsearch
+  template:
+    metadata:
+      labels:
+        app: searchengine-elasticsearch
+    spec:
+      containers:
+      - name: searchengine-elasticsearch
+        image: elasticsearch:7.10.1
+        env:
+        - name: discovery.type
+          value: single-node

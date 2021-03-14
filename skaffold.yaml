@@ -1,0 +1,55 @@
+apiVersion: skaffold/v2beta12
+kind: Config
+metadata:
+  name: project
+build:
+  artifacts:
+  - image: listeninghistory
+    context: listeninghistory
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      infer:
+        - '*.py'
+  - image: musiclibrary
+    sync:
+      infer:
+        - '*.py'
+    context: musiclibrary
+    docker:
+      dockerfile: Dockerfile
+  - image: searchengine
+    context: searchengine
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      infer:
+        - '*.py'
+  - image: searchengineimport
+    context: searchengineimport
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      infer:
+        - '*.py'
+deploy:
+  kubectl:
+    manifests:
+    - listeninghistory/deployment.yaml
+    - musiclibrary/deployment.yaml
+    - searchengine/deployment.yaml
+    - searchengineimport/deployment.yaml
+    - messagequeue/deployment.yaml
+portForward:
+- resourceType: service
+  resourceName: listeninghistory
+  localPort: 5000
+  port: 8000
+- resourceType: service
+  resourceName: musiclibrary
+  localPort: 6000
+  port: 8000
+- resourceType: service
+  resourceName: searchengine
+  localPort: 7000
+  port: 8000

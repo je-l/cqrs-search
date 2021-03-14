@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: messagequeue-service
+  labels:
+    app: messagequeue-service
+spec:
+  ports:
+  - port: 5672
+  selector:
+    app: messagequeue
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messagequeue
+  labels:
+    app: messagequeue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messagequeue
+  template:
+    metadata:
+      labels:
+        app: messagequeue
+    spec:
+      containers:
+      - name: messagequeue
+        image: rabbitmq:3.8
